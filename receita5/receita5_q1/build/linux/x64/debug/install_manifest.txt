@@ -1,0 +1,12 @@
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/flutter_application_1
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/data/icudtl.dat
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/lib/libflutter_linux_gtk.so
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/data/flutter_assets/FontManifest.json
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.json
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/data/flutter_assets/version.json
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.smcbin
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/data/flutter_assets/kernel_blob.bin
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES.Z
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/data/flutter_assets/fonts/MaterialIcons-Regular.otf
+/home/alexandre/Documentos/GitHub/disciplina-POO/receita5/receita5_q1/build/linux/x64/debug/bundle/data/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf

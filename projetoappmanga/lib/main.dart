@@ -15,7 +15,7 @@ class DataService {
   });
 
   void carregar(index) {
-    final funcoes = [carregarmanga];
+    final funcoes = [carregarmanga, sobre];
 
     tableStateNotifier.value = {
       'status': TableStatus.loading,
@@ -25,6 +25,15 @@ class DataService {
     };
 
     funcoes[index]();
+  }
+
+  void sobre() {
+    tableStateNotifier.value = {
+      'status': TableStatus.ready,
+      'dataObjects': [],
+      'columnNames': [],
+      'propertyNames': [],
+    };
   }
 
   void carregarmanga() {
@@ -129,10 +138,14 @@ class _MyAppState extends State<MyApp> {
               case TableStatus.loading:
                 return Center(child: CircularProgressIndicator());
               case TableStatus.ready:
-                return DataTableWidget(
-                  jsonObjects: value['dataObjects'],
-                  columnNames: value['columnNames'],
-                  propertyNames: value['propertyNames'],
+                return SingleChildScrollView(
+                  child: value['dataObjects'].isEmpty
+                      ? SobreWidget()
+                      : DataTableWidget(
+                          jsonObjects: value['dataObjects'],
+                          columnNames: value['columnNames'],
+                          propertyNames: value['propertyNames'],
+                        ),
                 );
               default:
                 return Text("...");
@@ -166,12 +179,12 @@ class NewNavBar extends HookWidget {
           icon: Icon(Icons.search),
         ),
         BottomNavigationBarItem(
-          label: "Favoritos",
-          icon: Icon(Icons.favorite),
+          label: "Sobre",
+          icon: Icon(Icons.report_gmailerrorred_outlined),
         ),
         BottomNavigationBarItem(
-          label: "Sobre",
-          icon: Icon(Icons.report),
+          label: "Favoritos",
+          icon: Icon(Icons.favorite_border_outlined),
         )
       ],
     );
@@ -215,6 +228,31 @@ class DataTableWidget extends StatelessWidget {
             ),
           )
           .toList(),
+    );
+  }
+}
+
+class SobreWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(height: 16),
+        SizedBox(height: 16),
+        Center(
+          child: Text(
+            "Seja bem-vindo ao app de busca de manga\n\nNesse aplicativo, você poderá buscar seu manga favorito e adicioná-lo aos favoritos.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

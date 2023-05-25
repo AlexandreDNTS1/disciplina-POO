@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:math';
 
 enum TableStatus { idle, loading, ready, error }
 
@@ -138,15 +139,22 @@ class _MyAppState extends State<MyApp> {
               case TableStatus.loading:
                 return Center(child: CircularProgressIndicator());
               case TableStatus.ready:
-                return SingleChildScrollView(
-                  child: value['dataObjects'].isEmpty
-                      ? SobreWidget()
-                      : DataTableWidget(
-                          jsonObjects: value['dataObjects'],
-                          columnNames: value['columnNames'],
-                          propertyNames: value['propertyNames'],
-                        ),
-                );
+                final dataObjects = value['dataObjects'];
+                if (dataObjects.isNotEmpty) {
+                  final random = Random();
+                  final randomIndex = random.nextInt(dataObjects.length);
+                  final randomObject = dataObjects[randomIndex];
+
+                  return SingleChildScrollView(
+                    child: DataTableWidget(
+                      jsonObjects: [randomObject],
+                      columnNames: value['columnNames'],
+                      propertyNames: value['propertyNames'],
+                    ),
+                  );
+                } else {
+                  return SobreWidget();
+                }
               default:
                 return Text("...");
             }
@@ -179,12 +187,12 @@ class NewNavBar extends HookWidget {
           icon: Icon(Icons.search),
         ),
         BottomNavigationBarItem(
-          label: "Sobre",
-          icon: Icon(Icons.report_gmailerrorred_outlined),
+          label: "Favoritos",
+          icon: Icon(Icons.favorite),
         ),
         BottomNavigationBarItem(
-          label: "Favoritos",
-          icon: Icon(Icons.favorite_border_outlined),
+          label: "Sobre",
+          icon: Icon(Icons.report),
         )
       ],
     );

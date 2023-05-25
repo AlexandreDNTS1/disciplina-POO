@@ -16,7 +16,7 @@ class DataService {
   });
 
   void carregar(index) {
-    final funcoes = [carregarmanga, sobre];
+    final funcoes = [carregarmanga,favorito ,sobre];
 
     tableStateNotifier.value = {
       'status': TableStatus.loading,
@@ -36,7 +36,14 @@ class DataService {
       'propertyNames': [],
     };
   }
-
+  void favorito(){
+    tableStateNotifier.value = {
+      'status': TableStatus.ready,
+      'dataObjects': [],
+      'columnNames': [],
+      'propertyNames': [],
+    };
+  }
   void carregarmanga() {
     var mangaUri = Uri.https('api.jikan.moe', '/v4/manga', {'limit': '15'});
 

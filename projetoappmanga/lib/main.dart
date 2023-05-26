@@ -15,9 +15,7 @@ class DataService {
     'error': '',
   });
 
-  void carregar(index) {
-    final funcoes = [carregarmanga,favorito ,sobre];
-
+  void carregar(String mangaName) {
     tableStateNotifier.value = {
       'status': TableStatus.loading,
       'dataObjects': [],
@@ -25,27 +23,11 @@ class DataService {
       'propertyNames': [],
     };
 
-    funcoes[index]();
+    pesquisarManga(mangaName);
   }
 
-  void sobre() {
-    tableStateNotifier.value = {
-      'status': TableStatus.ready,
-      'dataObjects': [],
-      'columnNames': [],
-      'propertyNames': [],
-    };
-  }
-  void favorito(){
-    tableStateNotifier.value = {
-      'status': TableStatus.ready,
-      'dataObjects': [],
-      'columnNames': [],
-      'propertyNames': [],
-    };
-  }
-  void carregarmanga() {
-    var mangaUri = Uri.https('api.jikan.moe', '/v4/manga', {'limit': '15'});
+  void pesquisarManga(String mangaName) {
+    var mangaUri = Uri.https('api.jikan.moe', '/v4/manga', {'q': mangaName});
 
     http.get(mangaUri).then((response) {
       if (response.statusCode == 200) {
@@ -58,12 +40,12 @@ class DataService {
           'columnNames': ["Title", "Type", "Score"]
         };
       } else {
-        throw Exception('Failed to load manga');
+        throw Exception('Failed to search manga');
       }
     }).catchError((error) {
       tableStateNotifier.value = {
         'status': TableStatus.error,
-        'error': 'Error loading manga data.',
+        'error': 'Error searching manga data.',
       };
     });
   }
@@ -81,10 +63,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    dataService.carregar(0);
   }
 
   @override
@@ -107,15 +90,39 @@ class _MyAppState extends State<MyApp> {
                     SizedBox(height: 16),
                     SizedBox(height: 16),
                     Center(
-                      child: Text(
-                        "Seja bem-vindo ao app de busca de manga",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black,
-                          fontStyle: FontStyle.italic,
-                        ),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Seja bem-vindo ao app de busca de manga",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                            child: TextField(
+                              controller: _searchController,
+                              decoration: InputDecoration(
+                                labelText: 'Nome do manga',
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              String mangaName = _searchController.text;
+                              if (mangaName.isNotEmpty) {
+                                dataService.carregar(mangaName);
+                              }
+                            },
+                            child: Text('Buscar'),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -174,7 +181,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 class NewNavBar extends HookWidget {
-  final Function(int) itemSelectedCallback;
+  final Function(String) itemSelectedCallback;
 
   NewNavBar({required this.itemSelectedCallback});
 
@@ -185,7 +192,14 @@ class NewNavBar extends HookWidget {
     return BottomNavigationBar(
       onTap: (index) {
         state.value = index;
-        itemSelectedCallback(index);
+        if (index == 0) {
+          showSearch(
+            context: context,
+            delegate: MangaSearchDelegate(itemSelectedCallback: itemSelectedCallback),
+          );
+        } else {
+          itemSelectedCallback('');
+        }
       },
       currentIndex: state.value,
       items: const [
@@ -203,6 +217,62 @@ class NewNavBar extends HookWidget {
         )
       ],
     );
+  }
+}
+
+class MangaSearchDelegate extends SearchDelegate<String> {
+  final Function(String) itemSelectedCallback;
+
+  MangaSearchDelegate({required this.itemSelectedCallback});
+
+  @override
+  String get searchFieldLabel => 'Nome do manga';
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return theme.copyWith(
+      primaryColor: theme.scaffoldBackgroundColor,
+      primaryIconTheme: theme.primaryIconTheme.copyWith(color: theme.primaryColor),
+      primaryColorBrightness: theme.brightness,
+      primaryTextTheme: theme.textTheme,
+    );
+  }
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return <Widget>[
+      if (query.isNotEmpty)
+        IconButton(
+          tooltip: 'Limpar',
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            query = '';
+          },
+        ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      tooltip: 'Voltar',
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    itemSelectedCallback(query);
+    return Center(child: CircularProgressIndicator());
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return Container(); // Não exibe sugestões, já que a API não suporta sugestões de pesquisa.
   }
 }
 

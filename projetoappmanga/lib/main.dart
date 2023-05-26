@@ -33,9 +33,13 @@ class DataService {
       if (response.statusCode == 200) {
         var mangaJson = jsonDecode(response.body);
 
+        var mangaObjects = mangaJson['data']
+            .where((obj) => obj['type'] == 'Manga')
+            .toList();
+
         tableStateNotifier.value = {
           'status': TableStatus.ready,
-          'dataObjects': mangaJson['data'],
+          'dataObjects': mangaObjects,
           'propertyNames': ["title", "type", "score"],
           'columnNames': ["Title", "Type", "Score"]
         };
@@ -77,6 +81,15 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              dataService.tableStateNotifier.value = {
+                'status': TableStatus.idle
+              };
+              _searchController.clear();
+            },
+          ),
           title: const Text("BUSCA MANGA"),
         ),
         body: ValueListenableBuilder(
@@ -104,7 +117,8 @@ class _MyAppState extends State<MyApp> {
                           ),
                           SizedBox(height: 16),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 32.0),
                             child: TextField(
                               controller: _searchController,
                               decoration: InputDecoration(
@@ -155,16 +169,16 @@ class _MyAppState extends State<MyApp> {
               case TableStatus.ready:
                 final dataObjects = value['dataObjects'];
                 if (dataObjects.isNotEmpty) {
-                  final random = Random();
-                  final randomIndex = random.nextInt(dataObjects.length);
-                  final randomObject = dataObjects[randomIndex];
-
-                  return SingleChildScrollView(
-                    child: DataTableWidget(
-                      jsonObjects: [randomObject],
-                      columnNames: value['columnNames'],
-                      propertyNames: value['propertyNames'],
-                    ),
+                  return ListView.builder(
+                    itemCount: dataObjects.length,
+                    itemBuilder: (_, index) {
+                      final object = dataObjects[index];
+                      return DataTableWidget(
+                        jsonObjects: [object],
+                        columnNames: value['columnNames'],
+                        propertyNames: value['propertyNames'],
+                      );
+                    },
                   );
                 } else {
                   return SobreWidget();
@@ -174,7 +188,8 @@ class _MyAppState extends State<MyApp> {
             }
           },
         ),
-        bottomNavigationBar: NewNavBar(itemSelectedCallback: dataService.carregar),
+        bottomNavigationBar:
+            NewNavBar(itemSelectedCallback: dataService.carregar),
       ),
     );
   }
@@ -195,7 +210,8 @@ class NewNavBar extends HookWidget {
         if (index == 0) {
           showSearch(
             context: context,
-            delegate: MangaSearchDelegate(itemSelectedCallback: itemSelectedCallback),
+            delegate:
+                MangaSearchDelegate(itemSelectedCallback: itemSelectedCallback),
           );
         } else {
           itemSelectedCallback('');
@@ -233,7 +249,8 @@ class MangaSearchDelegate extends SearchDelegate<String> {
     final ThemeData theme = Theme.of(context);
     return theme.copyWith(
       primaryColor: theme.scaffoldBackgroundColor,
-      primaryIconTheme: theme.primaryIconTheme.copyWith(color: theme.primaryColor),
+      primaryIconTheme:
+          theme.primaryIconTheme.copyWith(color: theme.primaryColor),
       primaryColorBrightness: theme.brightness,
       primaryTextTheme: theme.textTheme,
     );
@@ -284,7 +301,7 @@ class DataTableWidget extends StatelessWidget {
   DataTableWidget({
     this.jsonObjects = const [],
     this.columnNames = const [],
-    this.propertyNames = const ["name", "style", "ibu"],
+    this.propertyNames = const ["title", "type", "score"],
   });
 
   @override

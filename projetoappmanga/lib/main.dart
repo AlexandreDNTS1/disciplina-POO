@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:math';
 
 enum TableStatus { idle, loading, ready, error }
 
@@ -32,11 +31,16 @@ class DataService {
       if (response.statusCode == 200) {
         var mangaJson = jsonDecode(response.body);
 
+        List<dynamic> mangaData = mangaJson['data'];
+        List<dynamic> filteredData = mangaData
+            .where((obj) => obj['type'] == 'Manga')
+            .toList(); // Filtrar apenas os dados do tipo "Manga"
+
         tableStateNotifier.value = {
           'status': TableStatus.ready,
-          'dataObjects': mangaJson['data'],
+          'dataObjects': filteredData,
           'propertyNames': ["title", "type", "score", "authors"],
-          'columnNames': ["Title", "Type", "Score", "Authors"],
+          'columnNames': ["título", "tipo", "pontuação", "autores/autor"],
         };
       } else {
         throw Exception('Failed to search manga');
@@ -81,8 +85,11 @@ class MyApp extends StatelessWidget {
                     Center(
                       child: Column(
                         children: [
+                          Image.asset(
+                            'imagens/logo.png',
+                          ),
                           Text(
-                            "Seja bem-vindo ao app de busca de manga",
+                            "Seja bem-vindo ao app de busca de mangá",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
@@ -95,14 +102,14 @@ class MyApp extends StatelessWidget {
                             controller: _textFieldController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
-                              hintText: 'Enter a search term',
+                              hintText: 'Digite o nome do mangá',
                             ),
                           ),
                           SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () {
-                              String mangaName =
-                                  _textFieldController.text; // Nome do mangá para busca
+                              String mangaName = _textFieldController
+                                  .text; // Nome do mangá para busca
                               if (mangaName.isNotEmpty) {
                                 dataService.carregar(mangaName);
                               }
@@ -157,6 +164,14 @@ class MyApp extends StatelessWidget {
             }
           },
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.pop(context); // Voltar para a tela anterior
+          },
+          child: Icon(Icons.arrow_back),
+          backgroundColor: Colors.blue,
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       ),
     );
   }
@@ -189,26 +204,28 @@ class DataTableWidget extends StatelessWidget {
       rows: jsonObjects
           .map(
             (obj) => DataRow(
-              cells: propertyNames
-                  .map(
-                    (propName) {
-                      if (propName == "authors") {
-                        // Check if property name is "authors"
-                        final authorsList = obj[propName] as List<dynamic>;
-                        final authorNames =
-                            authorsList.map((author) => author['name']).join(', ');
-                        return DataCell(
-                          Text(authorNames),
-                        );
-                      } else {
-                        // For other properties
-                        return DataCell(
-                          Text(obj[propName].toString()),
-                        );
-                      }
-                    },
-                  )
-                  .toList(),
+              cells: propertyNames.map(
+                (propName) {
+                  if (propName == "authors") {
+                    // Check if property name is "authors"
+                    final authorsList = obj[propName] as List<dynamic>?;
+                    final authorNames = authorsList != null
+                        ? authorsList
+                            .map((author) => author['name'].toString())
+                            .join(', ')
+                        : '';
+                    return DataCell(
+                      Text(authorNames),
+                    );
+                  } else {
+                    // For other properties
+                    final propValue = obj[propName];
+                    return DataCell(
+                      propValue != null ? Text(propValue.toString()) : Text('-'),
+                    );
+                  }
+                },
+              ).toList(),
             ),
           )
           .toList(),
@@ -226,7 +243,7 @@ class SobreWidget extends StatelessWidget {
         SizedBox(height: 16),
         Center(
           child: Text(
-            "Seja bem-vindo ao app de busca de manga\n\nNesse aplicativo, você poderá buscar seu manga favorito e adicioná-lo aos favoritos.",
+            "Seja bem-vindo ao app de busca de mangá\n\nNesse aplicativo, você poderá buscar seu mangá favorito e adicioná-lo aos favoritos.",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,

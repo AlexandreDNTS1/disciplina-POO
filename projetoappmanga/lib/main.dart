@@ -39,16 +39,16 @@ class DataService {
         tableStateNotifier.value = {
           'status': TableStatus.ready,
           'dataObjects': filteredData,
-          'propertyNames': ["title", "type", "score", "authors"],
-          'columnNames': ["título", "tipo", "pontuação", "autores/autor"],
+          'propertyNames': ["title", "type", "score", "authors", "imageUrl"],
+          'columnNames': ["Título", "Tipo", "Pontuação", "Autores/Autor", "Imagem"],
         };
       } else {
-        throw Exception('Failed to search manga');
+        throw Exception('Falha ao pesquisar o mangá');
       }
     }).catchError((error) {
       tableStateNotifier.value = {
         'status': TableStatus.error,
-        'error': 'Error searching manga data.',
+        'error': 'Erro ao pesquisar dados do mangá.',
       };
     });
   }
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text("BUSCA MANGA"),
+          title: const Text("BUSCA MANGÁ"),
         ),
         body: ValueListenableBuilder(
           valueListenable: dataService.tableStateNotifier,
@@ -108,8 +108,7 @@ class MyApp extends StatelessWidget {
                           SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () {
-                              String mangaName = _textFieldController
-                                  .text; // Nome do mangá para busca
+                              String mangaName = _textFieldController.text;
                               if (mangaName.isNotEmpty) {
                                 dataService.carregar(mangaName);
                               }
@@ -166,7 +165,7 @@ class MyApp extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pop(context); // Voltar para a tela anterior
+            Navigator.pop(context);
           },
           child: Icon(Icons.arrow_back),
           backgroundColor: Colors.blue,
@@ -207,7 +206,6 @@ class DataTableWidget extends StatelessWidget {
               cells: propertyNames.map(
                 (propName) {
                   if (propName == "authors") {
-                    // Check if property name is "authors"
                     final authorsList = obj[propName] as List<dynamic>?;
                     final authorNames = authorsList != null
                         ? authorsList
@@ -217,8 +215,16 @@ class DataTableWidget extends StatelessWidget {
                     return DataCell(
                       Text(authorNames),
                     );
+                  } else if (propName == "image") {
+                    
+                    String imageUrl = obj[propName]['image_url'].toString();
+                    print(imageUrl);
+                    return DataCell(
+                      imageUrl.isNotEmpty
+                          ? Image.network(imageUrl)
+                          : Text('-'),
+                    );
                   } else {
-                    // For other properties
                     final propValue = obj[propName];
                     return DataCell(
                       propValue != null ? Text(propValue.toString()) : Text('-'),

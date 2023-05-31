@@ -220,7 +220,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           appBar: AppBar(
-            title: const Text("The Love Wins"),
+            title: const Text("Dicas"),
           ),
           body: ValueListenableBuilder(
               valueListenable: dataService.tableStateNotifier,

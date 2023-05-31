@@ -39,8 +39,8 @@ class DataService {
         tableStateNotifier.value = {
           'status': TableStatus.ready,
           'dataObjects': filteredData,
-          'propertyNames': ["title", "type", "score", "authors", "imageUrl"],
-          'columnNames': ["Título", "Tipo", "Pontuação", "Autores/Autor", "Imagem"],
+          'propertyNames': ["title", "type", "score", "authors"],
+          'columnNames': ["Título", "Tipo", "Pontuação", "Autores/Autor"],
         };
       } else {
         throw Exception('Falha ao pesquisar o mangá');
@@ -163,13 +163,22 @@ class MyApp extends StatelessWidget {
             }
           },
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Icon(Icons.arrow_back),
-          backgroundColor: Colors.blue,
-        ),
+        floatingActionButton: ['status'] == TableStatus.ready
+            ? FloatingActionButton(
+                onPressed: () {
+                  dataService.tableStateNotifier.value = {
+                    'status': TableStatus.idle,
+                    'dataObjects': [],
+                    'columnNames': [],
+                    'propertyNames': [],
+                    'error': '',
+                  };
+                  _textFieldController.clear();
+                },
+                child: Icon(Icons.arrow_back),
+                backgroundColor: Colors.blue,
+              )
+            : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       ),
     );
@@ -214,15 +223,6 @@ class DataTableWidget extends StatelessWidget {
                         : '';
                     return DataCell(
                       Text(authorNames),
-                    );
-                  } else if (propName == "image") {
-                    
-                    String imageUrl = obj[propName]['image_url'].toString();
-                    print(imageUrl);
-                    return DataCell(
-                      imageUrl.isNotEmpty
-                          ? Image.network(imageUrl)
-                          : Text('-'),
                     );
                   } else {
                     final propValue = obj[propName];

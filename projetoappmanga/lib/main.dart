@@ -30,10 +30,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late Future<List<dynamic>> mangaList;
+  List<dynamic> allMangaList = [];
   TextEditingController searchController = TextEditingController();
   double imageSize = 120.0;
   bool _showSearch = false;
-
+  bool isLoading = false;
+  ScrollController _scrollController = ScrollController();
+  bool isSearchActive = false;
 
   Future<List<dynamic>> fetchManga(String query) async {
     final response = await http.get(Uri.parse('https://api.jikan.moe/v4/manga?q=$query'));
@@ -48,7 +51,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void searchManga() {
     String query = searchController.text;
     setState(() {
-      mangaList = fetchManga(query);
+      isSearchActive = query.isNotEmpty;
+      if (isSearchActive) {
+        mangaList = fetchManga(query);
+      } else {
+        mangaList = fetchManga('');
+      }
     });
   }
 
@@ -57,15 +65,52 @@ class _MyHomePageState extends State<MyHomePage> {
       imageSize = imageSize == 120.0 ? 240.0 : 120.0;
     });
   }
+
   void toggleSearch() {
     setState(() {
       _showSearch = !_showSearch;
+      if (!_showSearch) {
+        searchController.clear();
+        isSearchActive = false;
+        mangaList = fetchManga('');
+      }
     });
   }
+
   @override
   void initState() {
     super.initState();
     mangaList = fetchManga('');
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (!isSearchActive &&
+        _scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      loadMoreData();
+    }
+  }
+
+  Future<void> loadMoreData() async {
+    if (!isLoading) {
+      setState(() {
+        isLoading = true;
+      });
+
+      // Fetch more manga data
+      List<dynamic> moreMangaList = await fetchManga('');
+
+      setState(() {
+        allMangaList.addAll(moreMangaList);
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -97,11 +142,46 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Center(
               child: FutureBuilder<List<dynamic>>(
                 future: mangaList,
-                builder: (context, snapshot) {                  if (snapshot.hasData) {
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && !isSearchActive) {
+                    allMangaList = snapshot.data!;
                     return ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      controller: _scrollController,
+                      itemCount: allMangaList.length + 1,
                       itemBuilder: (context, index) {
-                        final manga = snapshot.data![index];
+                        if (index < allMangaList.length) {
+                          final manga = allMangaList[index];
+                          final imageUrl = manga['images']['jpg']['image_url'];
+
+                          return Container(
+                            padding: EdgeInsets.all(8.0),
+                            child: ListTile(
+                              leading: GestureDetector(
+                                onTap: toggleImageSize,
+                                child: Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.contain,
+                                  width: 100,
+                                  height: 400,
+                                ),
+                              ),
+                              title: Text(manga['title']),
+                              subtitle: Text('ID: ${manga['mal_id']}'),
+                            ),
+                          );
+                        } else if (isLoading) {
+                          return _buildLoader();
+                        } else {
+                          return SizedBox();
+                        }
+                      },
+                    );
+                  } else if (snapshot.hasData && isSearchActive) {
+                    List<dynamic> searchResults = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: searchResults.length,
+                      itemBuilder: (context, index) {
+                        final manga = searchResults[index];
                         final imageUrl = manga['images']['jpg']['image_url'];
 
                         return Container(
@@ -137,6 +217,14 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: toggleSearch,
         child: Icon(_showSearch ? Icons.close : Icons.search),
       ),
+    );
+  }
+
+  Widget _buildLoader() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 16.0),
+      alignment: Alignment.center,
+      child: CircularProgressIndicator(),
     );
   }
 }

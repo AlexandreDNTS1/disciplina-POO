@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'API Jikan Demo',
+      title: 'SEU MANGA FAVORITO',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -32,6 +32,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<dynamic>> mangaList;
   TextEditingController searchController = TextEditingController();
   double imageSize = 120.0;
+  bool _showSearch = false;
+
 
   Future<List<dynamic>> fetchManga(String query) async {
     final response = await http.get(Uri.parse('https://api.jikan.moe/v4/manga?q=$query'));
@@ -55,7 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
       imageSize = imageSize == 120.0 ? 240.0 : 120.0;
     });
   }
-
+  void toggleSearch() {
+    setState(() {
+      _showSearch = !_showSearch;
+    });
+  }
   @override
   void initState() {
     super.initState();
@@ -70,15 +76,19 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: TextField(
-              controller: searchController,
-              decoration: InputDecoration(
-                labelText: 'Pesquisar mangá',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: searchManga,
+          AnimatedOpacity(
+            opacity: _showSearch ? 1.0 : 0.0,
+            duration: Duration(milliseconds: 200),
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: TextField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  labelText: 'Pesquisar mangá',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: searchManga,
+                  ),
                 ),
               ),
             ),
@@ -87,8 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Center(
               child: FutureBuilder<List<dynamic>>(
                 future: mangaList,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
+                builder: (context, snapshot) {                  if (snapshot.hasData) {
                     return ListView.builder(
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
@@ -103,8 +112,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Image.network(
                                 imageUrl,
                                 fit: BoxFit.contain,
-                                width: imageSize,
-                                height: imageSize,
+                                width: 100,
+                                height: 400,
                               ),
                             ),
                             title: Text(manga['title']),
@@ -123,6 +132,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: toggleSearch,
+        child: Icon(_showSearch ? Icons.close : Icons.search),
       ),
     );
   }

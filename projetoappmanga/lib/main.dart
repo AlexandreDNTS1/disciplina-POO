@@ -87,8 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
- 
-
   void toggleSearch() {
     setState(() {
       _showSearch = !_showSearch;
@@ -163,19 +161,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       itemBuilder: (context, index) {
                         if (index < allMangaList.length) {
                           final manga = allMangaList[index];
-                          final imageUrl = manga['images']['jpg']['image_url'];
+                          final imageUrl = manga['images']['jpg']['large_image_url'];
 
                           return Row(
                             children: [
                               Padding(
                                 padding: EdgeInsets.all(8.0),
                                 child: GestureDetector(
-                                  onTap: toggleImageSize,
                                   child: Image.network(
                                     imageUrl,
                                     fit: BoxFit.fill,
-                                    width: 160,
-                                    height: 240,
+                                    width: 260,
+                                    height: 340,
                                   ),
                                 ),
                               ),
@@ -200,19 +197,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       itemCount: searchResults.length,
                       itemBuilder: (context, index) {
                         final manga = searchResults[index];
-                        final imageUrl = manga['images']['jpg']['image_url'];
+                        final imageUrl = manga['images']['jpg']['large_image_url'];
 
                         return Row(
                           children: [
                             Padding(
                               padding: EdgeInsets.all(8.0),
                               child: GestureDetector(
-                                onTap: toggleImageSize,
                                 child: Image.network(
                                   imageUrl,
                                   fit: BoxFit.fill,
-                                  width: 160,
-                                  height: 200,
+                                  width: 260,
+                                  height: 340,
                                 ),
                               ),
                             ),

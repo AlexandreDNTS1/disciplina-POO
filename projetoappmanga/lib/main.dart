@@ -153,21 +153,27 @@ class _MyHomePageState extends State<MyHomePage> {
                           final manga = allMangaList[index];
                           final imageUrl = manga['images']['jpg']['image_url'];
 
-                          return Container(
-                            padding: EdgeInsets.all(8.0),
-                            child: ListTile(
-                              leading: GestureDetector(
-                                onTap: toggleImageSize,
-                                child: Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.contain,
-                                  width: 100,
-                                  height: 400,
+                          return Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: toggleImageSize,
+                                  child: Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.fill,
+                                    width: 160,
+                                    height: 240,
+                                  ),
                                 ),
                               ),
-                              title: Text(manga['title']),
-                              subtitle: Text('ID: ${manga['mal_id']}'),
-                            ),
+                              Expanded(
+                                child: ListTile(
+                                  title: Text(manga['title']),
+                                  subtitle: Text('ID: ${manga['mal_id']}'),
+                                ),
+                              ),
+                            ],
                           );
                         } else if (isLoading) {
                           return _buildLoader();
@@ -184,22 +190,28 @@ class _MyHomePageState extends State<MyHomePage> {
                         final manga = searchResults[index];
                         final imageUrl = manga['images']['jpg']['image_url'];
 
-                        return Container(
-                          padding: EdgeInsets.all(8.0),
-                          child: ListTile(
-                            leading: GestureDetector(
-                              onTap: toggleImageSize,
-                              child: Image.network(
-                                imageUrl,
-                                fit: BoxFit.contain,
-                                width: 100,
-                                height: 400,
+                        return Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: toggleImageSize,
+                                  child: Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.fill,
+                                    width: 160,
+                                    height: 200,
+                                  ),
+                                ),
                               ),
-                            ),
-                            title: Text(manga['title']),
-                            subtitle: Text('ID: ${manga['mal_id']}'),
-                          ),
-                        );
+                              Expanded(
+                                child: ListTile(
+                                  title: Text(manga['title']),
+                                  subtitle: Text('ID: ${manga['mal_id']}'),
+                                ),
+                              ),
+                            ],
+                          );
                       },
                     );
                   } else if (snapshot.hasError) {

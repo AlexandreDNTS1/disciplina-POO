@@ -37,6 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
   ScrollController _scrollController = ScrollController();
   bool isSearchActive = false;
+  int currentIndex = 0;
 
   Future<List<dynamic>> fetchManga(String query, [int? page]) async {
     final url = page != null
@@ -99,9 +100,10 @@ class _MyHomePageState extends State<MyHomePage> {
         searchController.clear();
         isSearchActive = false;
         mangaList = fetchManga('');
-      }
-      else{
+      } else {
         searchController.clear();
+        isSearchActive = false;
+        mangaList = fetchManga('');
       }
     });
   }
@@ -111,6 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     mangaList = fetchManga('');
     _scrollController.addListener(_scrollListener);
+    currentIndex = 0; // Inicialmente, o botão "Home" estará pressionado
   }
 
   @override
@@ -253,16 +256,19 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Sobre',
           ),
         ],
-        currentIndex: 1, // Set the current index to the "Pesquisar" tab
+        currentIndex: currentIndex, // Define o índice atual
         onTap: (int index) {
           if (index == 0) {
             toggleSearch();
           }
           if (index == 1) {
-            exibirPesquisa(); // Toggle the search bar when the "Pesquisar" tab is tapped
+            exibirPesquisa();
           } else {
             // Handle other tab taps
           }
+          setState(() {
+            currentIndex = index; // Atualiza o índice atual
+          });
         },
       ),
     );

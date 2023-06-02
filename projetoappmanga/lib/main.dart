@@ -29,7 +29,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int currentPage = 1;
   late Future<List<dynamic>> mangaList;
   List<dynamic> allMangaList = [];
   TextEditingController searchController = TextEditingController();
@@ -39,16 +38,16 @@ class _MyHomePageState extends State<MyHomePage> {
   ScrollController _scrollController = ScrollController();
   bool isSearchActive = false;
 
-Future<List<dynamic>> fetchManga(String query, [int? page]) async {
-  final url = page != null ? 'https://api.jikan.moe/v4/manga?q=$query&page=$page' : 'https://api.jikan.moe/v4/manga?q=$query';
-  final response = await http.get(Uri.parse(url));
+  Future<List<dynamic>> fetchManga(String query, [int? page]) async {
+    final url = page != null ? 'https://api.jikan.moe/v4/manga?q=$query&page=$page' : 'https://api.jikan.moe/v4/manga?q=$query';
+    final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode == 200) {
-    return json.decode(response.body)['data'];
-  } else {
-    throw Exception('Failed to load manga');
+    if (response.statusCode == 200) {
+      return json.decode(response.body)['data'];
+    } else {
+      throw Exception('Failed to load manga');
+    }
   }
-}
 
   void searchManga() {
     String query = searchController.text;
@@ -75,17 +74,19 @@ Future<List<dynamic>> fetchManga(String query, [int? page]) async {
         searchController.clear();
         isSearchActive = false;
         mangaList = fetchManga('');
+      } else {
+        // Automatically trigger search when the search button is pressed
+        searchManga();
       }
     });
   }
 
   @override
-
-void initState() {
-  super.initState();
-  mangaList = fetchManga('');
-  _scrollController.addListener(_scrollListener);
-}
+  void initState() {
+    super.initState();
+    mangaList = fetchManga('');
+    _scrollController.addListener(_scrollListener);
+  }
 
   @override
   void dispose() {
@@ -94,28 +95,26 @@ void initState() {
   }
 
   void _scrollListener() {
-    if (!isSearchActive &&
-        _scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (!isSearchActive && _scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       loadMoreData();
     }
   }
 
   Future<void> loadMoreData() async {
-  if (!isLoading) {
-    setState(() {
-      isLoading = true;
-    });
+    if (!isLoading) {
+      setState(() {
+        isLoading = true;
+      });
 
-    // Fetch more manga data
-    List<dynamic> moreMangaList = await fetchManga('', currentPage + 1);
+      // Fetch more manga data
+      List<dynamic> moreMangaList = await fetchManga('', allMangaList.length ~/ 20 + 1);
 
-    setState(() {
-      allMangaList.addAll(moreMangaList);
-      isLoading = false;
-      currentPage++;
-    });
+      setState(() {
+        allMangaList.addAll(moreMangaList);
+        isLoading = false;
+      });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -195,27 +194,27 @@ void initState() {
                         final imageUrl = manga['images']['jpg']['image_url'];
 
                         return Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: toggleImageSize,
-                                  child: Image.network(
-                                    imageUrl,
-                                    fit: BoxFit.fill,
-                                    width: 160,
-                                    height: 200,
-                                  ),
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onTap: toggleImageSize,
+                                child: Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.fill,
+                                  width: 160,
+                                  height: 200,
                                 ),
                               ),
-                              Expanded(
-                                child: ListTile(
-                                  title: Text(manga['title']),
-                                  subtitle: Text('ID: ${manga['mal_id']}'),
-                                ),
+                            ),
+                            Expanded(
+                              child: ListTile(
+                                title: Text(manga['title']),
+                                subtitle: Text('ID: ${manga['mal_id']}'),
                               ),
-                            ],
-                          );
+                            ),
+                          ],
+                        );
                       },
                     );
                   } else if (snapshot.hasError) {
@@ -229,9 +228,30 @@ void initState() {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: toggleSearch,
-        child: Icon(_showSearch ? Icons.close : Icons.search),
+
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Pesquisar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info),
+            label: 'Sobre',
+          ),
+        ],
+        currentIndex: 1, // Set the current index to the "Pesquisar" tab
+        onTap: (int index) {
+          if (index == 1) {
+            toggleSearch(); // Toggle the search bar when the "Pesquisar" tab is tapped
+          } else {
+            // Handle other tab taps
+          }
+        },
       ),
     );
   }

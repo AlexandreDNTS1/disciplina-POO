@@ -93,15 +93,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void toggleSearch() {
-     setState(() {
-       _showSearch = !_showSearch;
-       if (!_showSearch) {
-    searchController.clear();
-     isSearchActive = false;
-     mangaList = fetchManga('');
+    setState(() {
+      _showSearch = !_showSearch;
+      if (!_showSearch) {
+        searchController.clear();
+        isSearchActive = false;
+        mangaList = fetchManga('');
       }
-
-     });
+      else{
+        searchController.clear();
+      }
+    });
   }
 
   @override

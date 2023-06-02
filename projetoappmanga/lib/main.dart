@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'API Jikan Demo'),
+      home: MyHomePage(title: 'SEU MANGA FAVORITO'),
     );
   }
 }
@@ -38,6 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ScrollController _scrollController = ScrollController();
   bool isSearchActive = false;
   int currentIndex = 0;
+  bool showAboutText = false; // Novo estado para exibir o texto "teste app"
 
   Future<List<dynamic>> fetchManga(String query, [int? page]) async {
     final url = page != null
@@ -73,6 +74,12 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+  }
+
+  void sobreApp() {
+    setState(() {
+      showAboutText = true; // Atualiza o estado para exibir o texto "teste app"
+    });
   }
 
   void searchManga() {
@@ -150,85 +157,91 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             child: Center(
-              child: FutureBuilder<List<dynamic>>(
-                future: mangaList,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData && !isSearchActive) {
-                    allMangaList = snapshot.data!;
-                    return ListView.builder(
-                      controller: _scrollController,
-                      itemCount: allMangaList.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index < allMangaList.length) {
-                          final manga = allMangaList[index];
-                          final imageUrl = manga['images']['jpg']['large_image_url'];
+              child: showAboutText // Verifica se showAboutText é true para exibir o texto "teste app"
+                  ? Text('teste app')
+                  : FutureBuilder<List<dynamic>>(
+                      future: mangaList,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && !isSearchActive) {
+                          allMangaList = snapshot.data!;
+                          return ListView.builder(
+                            controller: _scrollController,
+                            itemCount: allMangaList.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index < allMangaList.length) {
+                                final manga = allMangaList[index];
+                                final imageUrl =
+                                    manga['images']['jpg']['large_image_url'];
 
-                          return Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  child: Image.network(
-                                    imageUrl,
-                                    fit: BoxFit.fill,
-                                    width: 260,
-                                    height: 340,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: ListTile(
-                                  title: Text(manga['title']),
-                                  subtitle: Text('ID: ${manga['mal_id']}'),
-                                ),
-                              ),
-                            ],
+                                return Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: GestureDetector(
+                                        child: Image.network(
+                                          imageUrl,
+                                          fit: BoxFit.fill,
+                                          width: 260,
+                                          height: 340,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: ListTile(
+                                        title: Text(manga['title']),
+                                        subtitle:
+                                            Text('ID: ${manga['mal_id']}'),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              } else if (isLoading) {
+                                return _buildLoader();
+                              } else {
+                                return SizedBox();
+                              }
+                            },
                           );
-                        } else if (isLoading) {
-                          return _buildLoader();
-                        } else {
-                          return SizedBox();
+                        } else if (snapshot.hasData && isSearchActive) {
+                          List<dynamic> searchResults = snapshot.data!;
+                          return ListView.builder(
+                            itemCount: searchResults.length,
+                            itemBuilder: (context, index) {
+                              final manga = searchResults[index];
+                              final imageUrl =
+                                  manga['images']['jpg']['large_image_url'];
+
+                              return Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: GestureDetector(
+                                      child: Image.network(
+                                        imageUrl,
+                                        fit: BoxFit.fill,
+                                        width: 260,
+                                        height: 340,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: ListTile(
+                                      title: Text(manga['title']),
+                                      subtitle:
+                                          Text('ID: ${manga['mal_id']}'),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
                         }
-                      },
-                    );
-                  } else if (snapshot.hasData && isSearchActive) {
-                    List<dynamic> searchResults = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: searchResults.length,
-                      itemBuilder: (context, index) {
-                        final manga = searchResults[index];
-                        final imageUrl = manga['images']['jpg']['large_image_url'];
 
-                        return Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                child: Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.fill,
-                                  width: 260,
-                                  height: 340,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: ListTile(
-                                title: Text(manga['title']),
-                                subtitle: Text('ID: ${manga['mal_id']}'),
-                              ),
-                            ),
-                          ],
-                        );
+                        return CircularProgressIndicator();
                       },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  }
-
-                  return CircularProgressIndicator();
-                },
-              ),
+                    ),
             ),
           ),
         ],
@@ -255,6 +268,8 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           if (index == 1) {
             exibirPesquisa();
+          } else if (index == 2) {
+            sobreApp();
           } else {
             // Handle other tab taps
           }

@@ -29,6 +29,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int currentPage = 1;
   late Future<List<dynamic>> mangaList;
   List<dynamic> allMangaList = [];
   TextEditingController searchController = TextEditingController();
@@ -38,15 +39,16 @@ class _MyHomePageState extends State<MyHomePage> {
   ScrollController _scrollController = ScrollController();
   bool isSearchActive = false;
 
-  Future<List<dynamic>> fetchManga(String query) async {
-    final response = await http.get(Uri.parse('https://api.jikan.moe/v4/manga?q=$query'));
+Future<List<dynamic>> fetchManga(String query, [int? page]) async {
+  final url = page != null ? 'https://api.jikan.moe/v4/manga?q=$query&page=$page' : 'https://api.jikan.moe/v4/manga?q=$query';
+  final response = await http.get(Uri.parse(url));
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body)['data'];
-    } else {
-      throw Exception('Failed to load manga');
-    }
+  if (response.statusCode == 200) {
+    return json.decode(response.body)['data'];
+  } else {
+    throw Exception('Failed to load manga');
   }
+}
 
   void searchManga() {
     String query = searchController.text;
@@ -78,11 +80,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    mangaList = fetchManga('');
-    _scrollController.addListener(_scrollListener);
-  }
+
+void initState() {
+  super.initState();
+  mangaList = fetchManga('');
+  _scrollController.addListener(_scrollListener);
+}
 
   @override
   void dispose() {
@@ -98,20 +101,21 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> loadMoreData() async {
-    if (!isLoading) {
-      setState(() {
-        isLoading = true;
-      });
+  if (!isLoading) {
+    setState(() {
+      isLoading = true;
+    });
 
-      // Fetch more manga data
-      List<dynamic> moreMangaList = await fetchManga('');
+    // Fetch more manga data
+    List<dynamic> moreMangaList = await fetchManga('', currentPage + 1);
 
-      setState(() {
-        allMangaList.addAll(moreMangaList);
-        isLoading = false;
-      });
-    }
+    setState(() {
+      allMangaList.addAll(moreMangaList);
+      isLoading = false;
+      currentPage++;
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {

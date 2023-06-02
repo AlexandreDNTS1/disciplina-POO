@@ -39,7 +39,9 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isSearchActive = false;
 
   Future<List<dynamic>> fetchManga(String query, [int? page]) async {
-    final url = page != null ? 'https://api.jikan.moe/v4/manga?q=$query&page=$page' : 'https://api.jikan.moe/v4/manga?q=$query';
+    final url = page != null
+        ? 'https://api.jikan.moe/v4/manga?q=$query&page=$page'
+        : 'https://api.jikan.moe/v4/manga?q=$query';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -47,6 +49,29 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       throw Exception('Failed to load manga');
     }
+  }
+
+  void exibirPesquisa() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Pesquisar mangá'),
+          content: TextField(
+            controller: searchController,
+          ),
+          actions: [
+            TextButton(
+              child: Text('Pesquisar'),
+              onPressed: () {
+                searchManga();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void searchManga() {
@@ -68,17 +93,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void toggleSearch() {
-    setState(() {
-      _showSearch = !_showSearch;
-      if (!_showSearch) {
-        searchController.clear();
-        isSearchActive = false;
-        mangaList = fetchManga('');
-      } else {
-        // Automatically trigger search when the search button is pressed
-        searchManga();
+     setState(() {
+       _showSearch = !_showSearch;
+       if (!_showSearch) {
+    searchController.clear();
+     isSearchActive = false;
+     mangaList = fetchManga('');
       }
-    });
+
+     });
   }
 
   @override
@@ -95,7 +118,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _scrollListener() {
-    if (!isSearchActive && _scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (!isSearchActive &&
+        _scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent) {
       loadMoreData();
     }
   }
@@ -107,7 +132,8 @@ class _MyHomePageState extends State<MyHomePage> {
       });
 
       // Fetch more manga data
-      List<dynamic> moreMangaList = await fetchManga('', allMangaList.length ~/ 20 + 1);
+      List<dynamic> moreMangaList =
+          await fetchManga('', allMangaList.length ~/ 20 + 1);
 
       setState(() {
         allMangaList.addAll(moreMangaList);
@@ -116,7 +142,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -124,23 +149,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: [
-          AnimatedOpacity(
-            opacity: _showSearch ? 1.0 : 0.0,
-            duration: Duration(milliseconds: 200),
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: TextField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  labelText: 'Pesquisar mangá',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: searchManga,
-                  ),
-                ),
-              ),
-            ),
-          ),
           Expanded(
             child: Center(
               child: FutureBuilder<List<dynamic>>(
@@ -228,12 +236,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
             label: 'Home',
+            icon: Icon(Icons.home),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
@@ -246,8 +253,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         currentIndex: 1, // Set the current index to the "Pesquisar" tab
         onTap: (int index) {
+          if (index == 0) {
+            toggleSearch();
+          }
           if (index == 1) {
-            toggleSearch(); // Toggle the search bar when the "Pesquisar" tab is tapped
+            exibirPesquisa(); // Toggle the search bar when the "Pesquisar" tab is tapped
           } else {
             // Handle other tab taps
           }

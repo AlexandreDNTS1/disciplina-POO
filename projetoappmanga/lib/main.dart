@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: WelcomeScreen(), // Altera a tela inicial para a tela de boas-vindas
+      home: WelcomeScreen(),
     );
   }
 }
@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ScrollController _scrollController = ScrollController();
   bool isSearchActive = false;
   int currentIndex = 0;
-  bool showAboutScreen = false; // Novo estado para exibir o texto "teste app"
+  bool showAboutScreen = false;
 
   Future<List<dynamic>> fetchManga(String query, [int? page]) async {
     final url = page != null
@@ -117,10 +117,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void redirectToMangaScreen() {
     setState(() {
-      showAboutScreen =
-          false; // Altera o estado para não exibir o texto "teste app"
-      currentIndex = 0; // Define o índice atual como 0 (Home)
-      mangaList = fetchManga(''); // Carrega os mangás novamente
+      showAboutScreen = false;
+      currentIndex = 0;
+      mangaList = fetchManga('');
     });
   }
 
@@ -152,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     mangaList = fetchManga('');
     _scrollController.addListener(_scrollListener);
-    currentIndex = 0; // Inicialmente, o botão "Home" estará pressionado
+    currentIndex = 0;
   }
 
   @override
@@ -175,7 +174,6 @@ class _MyHomePageState extends State<MyHomePage> {
         isLoading = true;
       });
 
-      // Fetch more manga data
       List<dynamic> moreMangaList =
           await fetchManga('', allMangaList.length ~/ 20 + 1);
 
@@ -196,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: Center(
               child: showAboutScreen
-                  ? AboutScreen() // Adicione um novo widget chamado AboutScreen para exibir a tela "Sobre o App"
+                  ? AboutScreen()
                   : FutureBuilder<List<dynamic>>(
                       future: mangaList,
                       builder: (context, snapshot) {
@@ -212,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     manga['images']['jpg']['large_image_url'];
                                 final authors =
                                     manga['authors'] as List<dynamic>;
-                                final genres = 
+                                final genres =
                                     manga['genres'] as List<dynamic>;
                                 return Row(
                                   children: [
@@ -276,9 +274,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               final imageUrl =
                                   manga['images']['jpg']['large_image_url'];
                               final authors =
-                                    manga['authors'] as List<dynamic>;
-                              final genres = 
-                                    manga['genres'] as List<dynamic>;
+                                  manga['authors'] as List<dynamic>;
+                              final genres =
+                                  manga['genres'] as List<dynamic>;
                               return Row(
                                 children: [
                                   Padding(
@@ -294,34 +292,34 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                   Expanded(
                                     child: ListTile(
-                                        title: Text(manga['title']),
-                                        subtitle: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('ID: ${manga['mal_id']}'),
-                                            Text(
-                                              'AUTOR/AUTORES:',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                      title: Text(manga['title']),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('ID: ${manga['mal_id']}'),
+                                          Text(
+                                            'AUTOR/AUTORES:',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: authors.map((author) {
-                                                return Text(author['name']);
-                                              }).toList(),
-                                            ),
-                                            Text(
-                                                'CAPÍTULOS: ${manga['chapters']}'),
-                                            Text(
-                                                'VOLUMES: ${manga['volumes']}'),
-                                            Text(
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: authors.map((author) {
+                                              return Text(author['name']);
+                                            }).toList(),
+                                          ),
+                                          Text(
+                                              'CAPÍTULOS: ${manga['chapters']}'),
+                                          Text(
+                                              'VOLUMES: ${manga['volumes']}'),
+                                          Text(
                                               'GENERO: ${genres.map((genre) => genre['name']).join(", ")}'),
-                                          ],
-                                        ),
+                                        ],
                                       ),
+                                    ),
                                   ),
                                 ],
                               );
@@ -353,20 +351,34 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Sobre',
           ),
         ],
-        currentIndex: currentIndex, // Define o índice atual
+        currentIndex: currentIndex,
         onTap: (int index) {
           if (index == 0) {
             toggleSearch();
-          }
-          if (index == 1) {
+            _scrollController.animateTo(
+              0,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+            );
+          } else if (index == 1) {
             exibirPesquisa();
+            _scrollController.animateTo(
+              0,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+            );
           } else if (index == 2) {
             sobreApp();
+            _scrollController.animateTo(
+              0,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+            );
           } else {
             // Handle other tab taps
           }
           setState(() {
-            currentIndex = index; // Atualiza o índice atual
+            currentIndex = index;
           });
         },
       ),
@@ -410,23 +422,21 @@ class AboutScreen extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
+          SizedBox(height: 10),
           Text(
-            '- Pesquisa de mangás',
-            style: TextStyle(
-              fontSize: 16,
-            ),
+            '- Exibição de mangás populares',
+            style: TextStyle(fontSize: 16),
           ),
           Text(
-            '- Visualização de detalhes do mangá',
-            style: TextStyle(
-              fontSize: 16,
-            ),
+            '- Pesquisa de mangás por título',
+            style: TextStyle(fontSize: 16),
           ),
-          Text(
-            '- Carregamento progressivo de resultados',
-            style: TextStyle(
-              fontSize: 16,
-            ),
+          SizedBox(height: 10),
+          ElevatedButton(
+            child: Text('Voltar'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ],
       ),

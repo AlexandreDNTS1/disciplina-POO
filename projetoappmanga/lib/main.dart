@@ -26,31 +26,40 @@ class WelcomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('SEU MANGA FAVORITO'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Bem-vindo ao SEU MANGA FAVORITO!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("imagens/logo.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Bem-vindo ao SEU MANGA FAVORITO!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              child: Text('Começar'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        MyHomePage(title: 'SEU MANGA FAVORITO'),
-                  ),
-                );
-              },
-            ),
-          ],
+              SizedBox(height: 20),
+              ElevatedButton(
+                child: Text('Começar'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          MyHomePage(title: 'SEU MANGA FAVORITO'),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -79,7 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool showAboutScreen = false;
 
   Future<List<dynamic>> fetchManga(String query, [int? page]) async {
-    final lang = 'pt'; // Altere o idioma para 'pt' para obter a sinopse em português
+    final lang =
+        'pt'; // Altere o idioma para 'pt' para obter a sinopse em português
     final url = page != null
         ? 'https://api.jikan.moe/v4/manga?q=$query&page=$page&lang=$lang'
         : 'https://api.jikan.moe/v4/manga?q=$query&lang=$lang';
@@ -251,9 +261,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                             Text(
                                                 'VOLUMES: ${manga['volumes']}'),
                                             Text(
-                                                'GENERO: ${genres.map((genre) => genre['name']).join(", ")}'),
+                                                'GÊNERO: ${genres.map((genre) => genre['name']).join(", ")}'),
                                             Text(
-                                                'SINOPSE: ${manga['synopsis']}'),
+                                                'PONTUAÇÃO: ${manga['score']}'),
                                           ],
                                         ),
                                       ),
@@ -315,9 +325,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                               'CAPÍTULOS: ${manga['chapters']}'),
                                           Text('VOLUMES: ${manga['volumes']}'),
                                           Text(
-                                              'GENERO: ${genres.map((genre) => genre['name']).join(", ")}'),
-                                          Text(
-                                              'synopsis: ${manga['synopsis']}'),
+                                              'GÊNERO: ${genres.map((genre) => genre['name']).join(", ")}'),
+                                          Text('PONTUAÇÃO: ${manga['score']}'),
                                         ],
                                       ),
                                     ),
@@ -415,6 +424,10 @@ class AboutScreen extends StatelessWidget {
               fontSize: 16,
             ),
           ),
+          Text('Esse app foi desenvolvido usando a API Jikan API (4.0.0)',
+          style:TextStyle(
+            fontSize:16,
+          )),
           SizedBox(height: 10),
           Text(
             'Recursos do aplicativo:',
@@ -423,22 +436,36 @@ class AboutScreen extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 10),
           Text(
-            '- Exibição de mangás populares',
-            style: TextStyle(fontSize: 16),
+            '- Pesquisa de mangás',
+            style: TextStyle(
+              fontSize: 16,
+            ),
           ),
           Text(
-            '- Pesquisa de mangás por título',
-            style: TextStyle(fontSize: 16),
+            '- Visualização de detalhes do mangá',
+            style: TextStyle(
+              fontSize: 16,
+            ),
           ),
-          SizedBox(height: 10),
-          ElevatedButton(
-            child: Text('Voltar'),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+          Text(
+            '- Carregamento progressivo de resultados\n',
+            style: TextStyle(
+              fontSize: 16,
+            ),
           ),
+          Text(
+            'DESENVOLVEDOR',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text('-Francimar Alexandre de Oliveira Dantas',
+              style: TextStyle(
+                fontSize: 16,
+              )),
+          
         ],
       ),
     );

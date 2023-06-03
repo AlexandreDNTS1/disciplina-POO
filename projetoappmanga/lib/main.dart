@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ScrollController _scrollController = ScrollController();
   bool isSearchActive = false;
   int currentIndex = 0;
-  bool showAboutText = false; // Novo estado para exibir o texto "teste app"
+  bool showAboutScreen = false; // Novo estado para exibir o texto "teste app"
 
   Future<List<dynamic>> fetchManga(String query, [int? page]) async {
     final url = page != null
@@ -57,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        showAboutScreen = false;
         return AlertDialog(
           title: Text('Pesquisar mangá'),
           content: TextField(
@@ -76,14 +77,24 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void redirectToMangaScreen() {
+    setState(() {
+      showAboutScreen =
+          false; // Altera o estado para não exibir o texto "teste app"
+      currentIndex = 0; // Define o índice atual como 0 (Home)
+      mangaList = fetchManga(''); // Carrega os mangás novamente
+    });
+  }
+
   void sobreApp() {
     setState(() {
-      showAboutText = true; // Atualiza o estado para exibir o texto "teste app"
+      showAboutScreen = true;
     });
   }
 
   void searchManga() {
     String query = searchController.text;
+    showAboutScreen = false;
     setState(() {
       isSearchActive = query.isNotEmpty;
       if (isSearchActive) {
@@ -95,18 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void toggleSearch() {
-    setState(() {
-      _showSearch = !_showSearch;
-      if (!_showSearch) {
-        searchController.clear();
-        isSearchActive = false;
-        mangaList = fetchManga('');
-      } else {
-        searchController.clear();
-        isSearchActive = false;
-        mangaList = fetchManga('');
-      }
-    });
+    showAboutScreen = false;
   }
 
   @override
@@ -157,8 +157,8 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             child: Center(
-              child: showAboutText // Verifica se showAboutText é true para exibir o texto "teste app"
-                  ? Text('teste app')
+              child: showAboutScreen
+                  ? AboutScreen() // Adicione um novo widget chamado AboutScreen para exibir a tela "Sobre o App"
                   : FutureBuilder<List<dynamic>>(
                       future: mangaList,
                       builder: (context, snapshot) {
@@ -227,8 +227,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Expanded(
                                     child: ListTile(
                                       title: Text(manga['title']),
-                                      subtitle:
-                                          Text('ID: ${manga['mal_id']}'),
+                                      subtitle: Text('ID: ${manga['mal_id']}'),
                                     ),
                                   ),
                                 ],
@@ -286,6 +285,15 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: EdgeInsets.symmetric(vertical: 16.0),
       alignment: Alignment.center,
       child: CircularProgressIndicator(),
+    );
+  }
+}
+
+class AboutScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text('Sobre o App SEU MANGA FAVORITO'),
     );
   }
 }

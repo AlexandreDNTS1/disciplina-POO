@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (BuildContext context) {
         showAboutScreen = false;
         return AlertDialog(
-          title: Text('Pesquisar mangá'),
+          title: Text('Pesquisar manga'),
           content: TextField(
             controller: searchController,
           ),
@@ -144,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void toggleSearch() {
-    showAboutScreen = false;
+    redirectToMangaScreen();
   }
 
   @override
@@ -210,7 +210,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 final manga = allMangaList[index];
                                 final imageUrl =
                                     manga['images']['jpg']['large_image_url'];
-
+                                final authors =
+                                    manga['authors'] as List<dynamic>;
+                                final genres = 
+                                    manga['genres'] as List<dynamic>;
                                 return Row(
                                   children: [
                                     Padding(
@@ -219,16 +222,40 @@ class _MyHomePageState extends State<MyHomePage> {
                                         child: Image.network(
                                           imageUrl,
                                           fit: BoxFit.fill,
-                                          width: 260,
-                                          height: 340,
+                                          width: 360,
+                                          height: 440,
                                         ),
                                       ),
                                     ),
                                     Expanded(
                                       child: ListTile(
                                         title: Text(manga['title']),
-                                        subtitle:
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
                                             Text('ID: ${manga['mal_id']}'),
+                                            Text(
+                                              'AUTOR/AUTORES:',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: authors.map((author) {
+                                                return Text(author['name']);
+                                              }).toList(),
+                                            ),
+                                            Text(
+                                                'CAPÍTULOS: ${manga['chapters']}'),
+                                            Text(
+                                                'VOLUMES: ${manga['volumes']}'),
+                                            Text(
+                                              'GENERO: ${genres.map((genre) => genre['name']).join(", ")}'),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -248,7 +275,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               final manga = searchResults[index];
                               final imageUrl =
                                   manga['images']['jpg']['large_image_url'];
-
+                              final authors =
+                                    manga['authors'] as List<dynamic>;
+                              final genres = 
+                                    manga['genres'] as List<dynamic>;
                               return Row(
                                 children: [
                                   Padding(
@@ -257,16 +287,41 @@ class _MyHomePageState extends State<MyHomePage> {
                                       child: Image.network(
                                         imageUrl,
                                         fit: BoxFit.fill,
-                                        width: 260,
-                                        height: 340,
+                                        width: 360,
+                                        height: 440,
                                       ),
                                     ),
                                   ),
                                   Expanded(
                                     child: ListTile(
-                                      title: Text(manga['title']),
-                                      subtitle: Text('ID: ${manga['mal_id']}'),
-                                    ),
+                                        title: Text(manga['title']),
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text('ID: ${manga['mal_id']}'),
+                                            Text(
+                                              'AUTOR/AUTORES:',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: authors.map((author) {
+                                                return Text(author['name']);
+                                              }).toList(),
+                                            ),
+                                            Text(
+                                                'CAPÍTULOS: ${manga['chapters']}'),
+                                            Text(
+                                                'VOLUMES: ${manga['volumes']}'),
+                                            Text(
+                                              'GENERO: ${genres.map((genre) => genre['name']).join(", ")}'),
+                                          ],
+                                        ),
+                                      ),
                                   ),
                                 ],
                               );
@@ -331,7 +386,50 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text('Sobre o App SEU MANGA FAVORITO'),
+      child: Column(
+        children: [
+          Text(
+            'SEU MANGA FAVORITO',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Nesse app, o usuário poderá buscar pelo seu mangá favorito.',
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Recursos do aplicativo:',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            '- Pesquisa de mangás',
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          Text(
+            '- Visualização de detalhes do mangá',
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          Text(
+            '- Carregamento progressivo de resultados',
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

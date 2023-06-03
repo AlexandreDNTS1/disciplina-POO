@@ -29,7 +29,7 @@ class WelcomeScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("imagens/logo.png"),
+            image: AssetImage("gifs/animeGIF.gif"),
             fit: BoxFit.cover,
           ),
         ),
@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<dynamic> allMangaList = [];
   TextEditingController searchController = TextEditingController();
   double imageSize = 120.0;
-  bool _showSearch = false;
+  // bool _showSearch = false;
   bool isLoading = false;
   ScrollController _scrollController = ScrollController();
   bool isSearchActive = false;
@@ -201,7 +201,9 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Column(
+
         children: [
+          
           Expanded(
             child: Center(
               child: showAboutScreen
@@ -212,6 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         if (snapshot.hasData && !isSearchActive) {
                           allMangaList = snapshot.data!;
                           return ListView.builder(
+                            
                             controller: _scrollController,
                             itemCount: allMangaList.length + 1,
                             itemBuilder: (context, index) {
@@ -264,6 +267,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 'GÊNERO: ${genres.map((genre) => genre['name']).join(", ")}'),
                                             Text(
                                                 'PONTUAÇÃO: ${manga['score']}'),
+                                            Text('TIPO: ${manga['type']}'),
                                           ],
                                         ),
                                       ),
@@ -327,6 +331,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                           Text(
                                               'GÊNERO: ${genres.map((genre) => genre['name']).join(", ")}'),
                                           Text('PONTUAÇÃO: ${manga['score']}'),
+                                          Text('TIPO: ${manga['type']}'),
+                                          Text('RANK: ${manga['rank']}')
                                         ],
                                       ),
                                     ),
@@ -425,9 +431,9 @@ class AboutScreen extends StatelessWidget {
             ),
           ),
           Text('Esse app foi desenvolvido usando a API Jikan API (4.0.0)',
-          style:TextStyle(
-            fontSize:16,
-          )),
+              style: TextStyle(
+                fontSize: 16,
+              )),
           SizedBox(height: 10),
           Text(
             'Recursos do aplicativo:',
@@ -465,7 +471,6 @@ class AboutScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
               )),
-          
         ],
       ),
     );

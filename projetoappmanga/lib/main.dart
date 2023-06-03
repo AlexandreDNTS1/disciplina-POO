@@ -79,9 +79,10 @@ class _MyHomePageState extends State<MyHomePage> {
   bool showAboutScreen = false;
 
   Future<List<dynamic>> fetchManga(String query, [int? page]) async {
+    final lang = 'pt'; // Altere o idioma para 'pt' para obter a sinopse em português
     final url = page != null
-        ? 'https://api.jikan.moe/v4/manga?q=$query&page=$page'
-        : 'https://api.jikan.moe/v4/manga?q=$query';
+        ? 'https://api.jikan.moe/v4/manga?q=$query&page=$page&lang=$lang'
+        : 'https://api.jikan.moe/v4/manga?q=$query&lang=$lang';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -210,8 +211,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     manga['images']['jpg']['large_image_url'];
                                 final authors =
                                     manga['authors'] as List<dynamic>;
-                                final genres =
-                                    manga['genres'] as List<dynamic>;
+                                final genres = manga['genres'] as List<dynamic>;
                                 return Row(
                                   children: [
                                     Padding(
@@ -251,7 +251,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                             Text(
                                                 'VOLUMES: ${manga['volumes']}'),
                                             Text(
-                                              'GENERO: ${genres.map((genre) => genre['name']).join(", ")}'),
+                                                'GENERO: ${genres.map((genre) => genre['name']).join(", ")}'),
+                                            Text(
+                                                'SINOPSE: ${manga['synopsis']}'),
                                           ],
                                         ),
                                       ),
@@ -273,10 +275,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               final manga = searchResults[index];
                               final imageUrl =
                                   manga['images']['jpg']['large_image_url'];
-                              final authors =
-                                  manga['authors'] as List<dynamic>;
-                              final genres =
-                                  manga['genres'] as List<dynamic>;
+                              final authors = manga['authors'] as List<dynamic>;
+                              final genres = manga['genres'] as List<dynamic>;
                               return Row(
                                 children: [
                                   Padding(
@@ -313,10 +313,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                           Text(
                                               'CAPÍTULOS: ${manga['chapters']}'),
-                                          Text(
-                                              'VOLUMES: ${manga['volumes']}'),
+                                          Text('VOLUMES: ${manga['volumes']}'),
                                           Text(
                                               'GENERO: ${genres.map((genre) => genre['name']).join(", ")}'),
+                                          Text(
+                                              'synopsis: ${manga['synopsis']}'),
                                         ],
                                       ),
                                     ),

@@ -88,11 +88,10 @@ class _MyHomePageState extends State<MyHomePage> {
   bool showAboutScreen = false;
 
   Future<List<dynamic>> fetchManga(String query, [int? page]) async {
-    final lang =
-        'pt'; // Altere o idioma para 'pt' para obter a sinopse em português
+  
     final url = page != null
-        ? 'https://api.jikan.moe/v4/manga?q=$query&page=$page&lang=$lang'
-        : 'https://api.jikan.moe/v4/manga?q=$query&lang=$lang';
+        ? 'https://api.jikan.moe/v4/manga?q=$query&page=$page&lang=pt'
+        : 'https://api.jikan.moe/v4/manga?q=$query&lang=pt';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

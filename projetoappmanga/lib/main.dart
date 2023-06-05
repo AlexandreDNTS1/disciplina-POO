@@ -40,9 +40,9 @@ class WelcomeScreen extends StatelessWidget {
               Text(
                 'Bem-vindo ao SEU MANGA FAVORITO!',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 44,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Color.fromARGB(255, 147, 14, 187),
                 ),
               ),
               SizedBox(height: 20),
@@ -88,7 +88,6 @@ class _MyHomePageState extends State<MyHomePage> {
   bool showAboutScreen = false;
 
   Future<List<dynamic>> fetchManga(String query, [int? page]) async {
-  
     final url = page != null
         ? 'https://api.jikan.moe/v4/manga?q=$query&page=$page&lang=pt'
         : 'https://api.jikan.moe/v4/manga?q=$query&lang=pt';
@@ -200,9 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Column(
-
         children: [
-          
           Expanded(
             child: Center(
               child: showAboutScreen
@@ -213,7 +210,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         if (snapshot.hasData && !isSearchActive) {
                           allMangaList = snapshot.data!;
                           return ListView.builder(
-                            
                             controller: _scrollController,
                             itemCount: allMangaList.length + 1,
                             itemBuilder: (context, index) {
@@ -267,6 +263,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                             Text(
                                                 'PONTUAÇÃO: ${manga['score']}'),
                                             Text('TIPO: ${manga['type']}'),
+                                            Text(
+                                                'POPULARIDADE: ${manga['popularity']}'),
                                           ],
                                         ),
                                       ),
@@ -331,7 +329,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                               'GÊNERO: ${genres.map((genre) => genre['name']).join(", ")}'),
                                           Text('PONTUAÇÃO: ${manga['score']}'),
                                           Text('TIPO: ${manga['type']}'),
-                                          Text('RANK: ${manga['rank']}')
+                                          Text('RANK: ${manga['rank']}'),
+                                          Text(
+                                              'POPULARIDADE: ${manga['popularity']}'),
                                         ],
                                       ),
                                     ),

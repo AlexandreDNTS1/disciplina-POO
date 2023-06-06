@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/gestures.dart';
 import 'dart:convert';
 
 void main() {
@@ -12,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SEU MANGA FAVORITO',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal, // Cor corrigida
       ),
       home: MyHomePage(title: 'SEU MANGA FAVORITO'),
     );
@@ -23,9 +25,8 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-   
       body: Container(
-        decoration: BoxDecoration(
+       decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage("gifs/animeGIF.gif"),
             fit: BoxFit.cover,
@@ -35,16 +36,8 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Text(
-              //   'Bem-vindo ao SEU MANGA FAVORITO!',
-              //   style: TextStyle(
-              //     fontSize: 44,
-              //     fontWeight: FontWeight.bold,
-              //     color: Color.fromARGB(255, 147, 14, 187),
-              //   ),
-              // ),
+
               SizedBox(height: 20),
-             
             ],
           ),
         ),
@@ -52,6 +45,7 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 }
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -110,14 +104,17 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
- void redirectToMangaScreen() {
-  setState(() {
-    showAboutScreen = false;
-    currentIndex = 0;
-    mangaList = fetchManga('');
-  });
-}
+  void redirectToMangaScreen() {
+    setState(() {
+      showAboutScreen = false;
+      currentIndex = 0;
+      mangaList = fetchManga('');
+    });
+  }
 
+  void favorito() {
+    print('favorito');
+  }
 
   void sobreApp() {
     setState(() {
@@ -192,6 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
+      backgroundColor: Colors.indigo,
       body: Column(
         children: [
           Expanded(
@@ -233,37 +231,81 @@ class _MyHomePageState extends State<MyHomePage> {
                                         SizedBox(width: 20),
                                         Expanded(
                                           child: ListTile(
-                                            title: Text(manga['title']),
+                                            title: Text(manga['title'],
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
                                             subtitle: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text('ID: ${manga['mal_id']}'),
-                                                Text(
-                                                  'AUTOR/AUTORES:',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
+                                                Text('ID: ${manga['mal_id']}',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                Text('AUTOR/AUTORES:',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
                                                 Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children:
                                                       authors.map((author) {
-                                                    return Text(author['name']);
+                                                    return Text(author['name'],
+                                                        style: TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold));
                                                   }).toList(),
                                                 ),
                                                 Text(
-                                                    'CAPÍTULOS: ${manga['chapters']}'),
+                                                  'CAPÍTULOS: ${manga['chapters']}',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
                                                 Text(
-                                                    'VOLUMES: ${manga['volumes']}'),
+                                                    'VOLUMES: ${manga['volumes']}',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
                                                 Text(
-                                                    'GÊNERO: ${genres.map((genre) => genre['name']).join(", ")}'),
+                                                    'GÊNERO: ${genres.map((genre) => genre['name']).join(", ")}',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
                                                 Text(
-                                                    'PONTUAÇÃO: ${manga['score']}'),
-                                                Text('TIPO: ${manga['type']}'),
+                                                    'PONTUAÇÃO: ${manga['score']}',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                Text('TIPO: ${manga['type']}',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
                                                 Text(
-                                                    'POPULARIDADE: ${manga['popularity']}'),
+                                                    'POPULARIDADE: ${manga['popularity']}',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                ElevatedButton(
+                                                  child: Text(
+                                                      'Adicionar aos favoritos'),
+                                                  onPressed: () {
+                                                    favoritomanga(); // Função que você deseja chamar ao pressionar o botão
+                                                  },
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -304,37 +346,78 @@ class _MyHomePageState extends State<MyHomePage> {
                                       ),
                                       Expanded(
                                         child: ListTile(
-                                          title: Text(manga['title']),
+                                          title: Text(manga['title'],
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold)),
                                           subtitle: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text('ID: ${manga['mal_id']}'),
-                                              Text(
-                                                'AUTOR/AUTORES:',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
+                                              Text('ID: ${manga['mal_id']}',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                              Text('AUTOR/AUTORES:',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
                                               Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: authors.map((author) {
-                                                  return Text(author['name']);
+                                                  return Text(author['name'],
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold));
                                                 }).toList(),
                                               ),
                                               Text(
-                                                  'CAPÍTULOS: ${manga['chapters']}'),
+                                                'CAPÍTULOS: ${manga['chapters']}',
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
                                               Text(
-                                                  'VOLUMES: ${manga['volumes']}'),
+                                                  'VOLUMES: ${manga['volumes']}',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
                                               Text(
-                                                  'GÊNERO: ${genres.map((genre) => genre['name']).join(", ")}'),
+                                                  'GÊNERO: ${genres.map((genre) => genre['name']).join(", ")}',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
                                               Text(
-                                                  'PONTUAÇÃO: ${manga['score']}'),
-                                              Text('TIPO: ${manga['type']}'),
-                                              Text('RANK: ${manga['rank']}'),
+                                                  'PONTUAÇÃO: ${manga['score']}',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                              Text('TIPO: ${manga['type']}',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
                                               Text(
-                                                  'POPULARIDADE: ${manga['popularity']}'),
+                                                  'POPULARIDADE: ${manga['popularity']}',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                              ElevatedButton(
+                                                child: Text(
+                                                    'Adicionar aos favoritos'),
+                                                onPressed: () {
+                                                  favoritomanga(); // Função que você deseja chamar ao pressionar o botão
+                                                },
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -373,6 +456,10 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.info),
             label: 'Sobre',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favoritos',
+          ),
         ],
         currentIndex: currentIndex,
         onTap: (int index) {
@@ -404,6 +491,8 @@ class _MyHomePageState extends State<MyHomePage> {
               duration: Duration(milliseconds: 500),
               curve: Curves.easeInOut,
             );
+          } else if (index == 4) {
+            favorito();
           } else {
             // Handle other tab taps
           }
@@ -444,10 +533,24 @@ class AboutScreen extends StatelessWidget {
               fontSize: 16,
             ),
           ),
-          Text('Esse app foi desenvolvido usando a API Jikan API (4.0.0)',
-              style: TextStyle(
-                fontSize: 16,
-              )),
+          RichText(
+            text: TextSpan(
+              text: 'Esse app foi desenvolvido usando a API  ',
+              children: [
+                TextSpan(
+                  text: 'Jikan API (4.0.0)',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      launch('https://docs.api.jikan.moe/#tag/manga');
+                    },
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: 10),
           Text(
             'Recursos do aplicativo:',
@@ -481,10 +584,12 @@ class AboutScreen extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text('-Francimar Alexandre de Oliveira Dantas',
-              style: TextStyle(
-                fontSize: 16,
-              )),
+          Text(
+            '- Francimar Alexandre de Oliveira Dantas',
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
         ],
       ),
     );

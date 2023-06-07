@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SEU MANGA FAVORITO',
       theme: ThemeData(
-        primarySwatch: Colors.teal, // Cor corrigida
+        primarySwatch: Colors.teal,
       ),
       home: MyHomePage(title: 'SEU MANGA FAVORITO'),
     );
@@ -26,7 +26,7 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-       decoration: BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage("gifs/animeGIF.gif"),
             fit: BoxFit.cover,
@@ -36,7 +36,6 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
               SizedBox(height: 20),
             ],
           ),
@@ -122,13 +121,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void favoritomanga() {
-    setState(() {
-      showAboutScreen = false;
-      currentIndex = 2;
-    });
-  }
-
   void searchManga() {
     String query = searchController.text;
     showAboutScreen = false;
@@ -189,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      backgroundColor: Colors.indigo,
+      backgroundColor: Colors.blueGrey,
       body: Column(
         children: [
           Expanded(
@@ -299,13 +291,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                                         fontSize: 20,
                                                         fontWeight:
                                                             FontWeight.bold)),
-                                                ElevatedButton(
-                                                  child: Text(
-                                                      'Adicionar aos favoritos'),
-                                                  onPressed: () {
-                                                    favoritomanga(); // Função que você deseja chamar ao pressionar o botão
-                                                  },
-                                                ),
+                                                 Text(
+                                                    'SINOPSE: ${manga['synopsis']}',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
                                               ],
                                             ),
                                           ),
@@ -411,13 +402,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                                       fontSize: 20,
                                                       fontWeight:
                                                           FontWeight.bold)),
-                                              ElevatedButton(
-                                                child: Text(
-                                                    'Adicionar aos favoritos'),
-                                                onPressed: () {
-                                                  favoritomanga(); // Função que você deseja chamar ao pressionar o botão
-                                                },
-                                              ),
+                                               Text(
+                                                    'SINOPSE: ${manga['synopsis']}',
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
                                             ],
                                           ),
                                         ),
@@ -456,10 +446,6 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.info),
             label: 'Sobre',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favoritos',
-          ),
         ],
         currentIndex: currentIndex,
         onTap: (int index) {
@@ -491,8 +477,6 @@ class _MyHomePageState extends State<MyHomePage> {
               duration: Duration(milliseconds: 500),
               curve: Curves.easeInOut,
             );
-          } else if (index == 4) {
-            favorito();
           } else {
             // Handle other tab taps
           }

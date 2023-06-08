@@ -58,8 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<dynamic>> mangaList;
   List<dynamic> allMangaList = [];
   TextEditingController searchController = TextEditingController();
-  double imageSize = 120.0;
-  // bool _showSearch = false;
   bool isLoading = false;
   ScrollController _scrollController = ScrollController();
   bool isSearchActive = false;
@@ -111,9 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void favorito() {
-    print('favorito');
-  }
+
 
   void sobreApp() {
     setState(() {
@@ -144,12 +140,6 @@ class _MyHomePageState extends State<MyHomePage> {
     mangaList = fetchManga('');
     _scrollController.addListener(_scrollListener);
     currentIndex = 0;
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_scrollListener);
-    super.dispose();
   }
 
   void _scrollListener() {
@@ -545,19 +535,7 @@ class AboutScreen extends StatelessWidget {
             ),
           ),
           Text(
-            '- Pesquisa de mangás',
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          Text(
-            '- Visualização de detalhes do mangá',
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          Text(
-            '- Carregamento progressivo de resultados\n',
+            '\t- Pesquisa de mangás\n\t- Visualização de detalhes do mangá\n\t-Carregamento progressivo de resultados\n',
             style: TextStyle(
               fontSize: 16,
             ),

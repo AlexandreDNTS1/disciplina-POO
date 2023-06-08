@@ -520,11 +520,12 @@ class AboutScreen extends StatelessWidget {
           RichText(
             text: TextSpan(
               text: 'Esse app foi desenvolvido usando a API  ',
+              style: TextStyle(color:Colors.black),
               children: [
                 TextSpan(
                   text: 'Jikan API (4.0.0)',
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: Colors.black,
                     decoration: TextDecoration.underline,
                   ),
                   recognizer: TapGestureRecognizer()

@@ -1,20 +1,20 @@
-# projeto SEU MANGA FAVORITO
+# Seu Manga Favorito
+Este é um aplicativo desenvolvido em Flutter que permite aos usuários buscar por seus mangás favoritos. O aplicativo utiliza a API Jikan (4.0.0) para obter dados sobre os mangás.
+
 
 
 ## link zapp.run para executar o app
 
 `https://zapp.run/edit/mini-projeto-zk8y063ak8z0?file=lib/main.dart`
 
-## Sobre o projeto 
-Um aplicativo Flutter que permite aos usuários buscar por seu mangá favorito e visualizar detalhes sobre ele. O aplicativo utiliza a API Jikan API (4.0.0) para obter os dados dos mangás.
 
-Funcionalidades do aplicativo:
-1. Tela de boas-vindas: exibe uma imagem de fundo e uma mensagem de boas-vindas. O usuário pode começar a usar o aplicativo pressionando o botão "Começar".
-2. Tela principal: exibe uma lista de mangás. Inicialmente, a lista mostra todos os mangás disponíveis. O usuário pode rolar a lista para carregar mais mangás. A lista também possui uma opção de pesquisa, onde o usuário pode inserir um termo de busca para filtrar os mangás exibidos.
-3. Detalhes do mangá: ao clicar em um mangá da lista, o usuário pode ver os detalhes desse mangá, incluindo título, ID, autor(es), capítulos, volumes, gênero, pontuação, tipo e popularidade.
-4. Barra de navegação inferior: permite ao usuário alternar entre as telas "Home", "Pesquisar" e "Sobre". A tela "Home" mostra a lista de mangás, a tela "Pesquisar" permite ao usuário inserir um termo de busca e a tela "Sobre" exibe informações sobre o aplicativo e o desenvolvedor.
+## Funcionalidades
 
-O aplicativo exibirá a tela de boas-vindas com a imagem de fundo. Ao pressionar o botão "Começar", você será direcionado para a tela principal, onde poderá visualizar uma lista de mangás. Você pode rolar a lista para carregar mais mangás ou usar a opção de pesquisa na barra de navegação inferior para pesquisar um mangá específico. Ao clicar em um mangá da lista, você verá os detalhes desse mangá. Na barra de navegação inferior, você pode alternar entre as telas "Home", "Pesquisar" e "Sobre" para explorar diferentes funcionalidades do aplicativo.
+- Pesquisa de mangás: O usuário pode pesquisar por mangás utilizando palavras-chave.
+- Visualização de detalhes do mangá: O aplicativo exibe os detalhes dos mangás, incluindo título, autor(es), número de capítulos, número de volumes, gênero, pontuação, tipo e popularidade.
+- Carregamento progressivo de resultados: O aplicativo carrega os resultados dos mangás de forma progressiva, permitindo a exibição de mais mangás à medida que o usuário rola a tela.
+- Tela "Sobre": O aplicativo possui uma tela "Sobre" que fornece informações sobre o aplicativo e o desenvolvedor.
+
 
 ## Para executar o aplicativo na sua máquina, siga as etapas abaixo:
 1. Certifique-se de ter o Flutter instalado em seu sistema. Se você não tiver o Flutter, siga as instruções de instalação no site oficial do Flutter: `https://flutter.dev/docs/get-started/install`
@@ -27,6 +27,17 @@ O aplicativo exibirá a tela de boas-vindas com a imagem de fundo. Ao pressionar
 
 `cd disciplina-POO/projetoappmanga`
 
-4. Execute o aplicativo usando o seguinte comando no terminal:
+4. Navegar até o diretório lib
+
+`cd lib`
+
+5. Execute o aplicativo usando o seguinte comando no terminal:
 
 `flutter run`
+
+## API Jikan
+O aplicativo utiliza a API Jikan para obter os dados dos mangás. A API Jikan é uma API não oficial para o MyAnimeList.net e fornece acesso a informações sobre animes e mangás. Para obter mais informações sobre a API Jikan, consulte a documentação oficial.
+
+Desenvolvedor
+Nome: Francimar Alexandre de Oliveira Dantas
+Se você tiver alguma dúvida ou sugestão sobre o aplicativo, entre em contato com o desenvolvedor através do seguinte endereço de e-mail: francimaralexandredt@gmail.com.

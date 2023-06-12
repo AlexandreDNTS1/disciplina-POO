@@ -27,11 +27,15 @@ Este é um aplicativo desenvolvido em Flutter que permite aos usuários buscar p
 
 `cd disciplina-POO/projetoappmanga`
 
-4. Navegar até o diretório lib
+4. baixar as dependencias
+
+`flutter pub get`
+
+5. Navegar até o diretório lib
 
 `cd lib`
 
-5. Execute o aplicativo usando o seguinte comando no terminal:
+6. Execute o aplicativo usando o seguinte comando no terminal:
 
 `flutter run`
 
